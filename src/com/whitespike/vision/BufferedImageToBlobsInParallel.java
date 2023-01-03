@@ -20,136 +20,6 @@ import com.whitespike.visionstructure.*;
  */
 public class BufferedImageToBlobsInParallel {
 	/**
-	 * Used when combining row blobs into their larger forms using parallel processing.
-	 * @author Jonah Schreiner
-	 *
-	 */
-	public static class BlobParallelCombiner implements Callable<BlobCombinerThreadResult>{
-		private final int iValue;
-		private final List<BlobThreadResult> blobThreadResults;
-		private final int minX;
-		private final int maxX;
-		public BlobParallelCombiner(int iValueIn, List<BlobThreadResult> blobThreadResultsIn, int minXIn, int maxXIn, BufferedImage testImageIn) {
-			this.iValue = iValueIn;
-			this.blobThreadResults = blobThreadResultsIn;
-			this.minX = minXIn;
-			this.maxX = maxXIn;
-		}
-		/**
-		 * @return The result from the combining in this thread.
-		 */
-		public BlobCombinerThreadResult call() {
-			List<Blob> outputBlobs = new ArrayList<Blob>();
-			for (int i = 0; i < blobThreadResults.size() - 1; i++) {
-				if (this.iValue == 0) {
-					System.out.println();
-				}
-				BlobThreadResult currentResult = blobThreadResults.get(i);
-				BlobThreadResult nextResult = blobThreadResults.get(i + 1);
-				List<Pixel> currentBottomRowPixelQueue = new ArrayList<Pixel>();
-				for (int j = minX; j < maxX; j++) {
-					currentBottomRowPixelQueue.add(currentResult.bottomRowOfPixels.get(j));
-				}
-				for (int j = 0; j < currentBottomRowPixelQueue.size(); j++) {
-					
-					Pixel currentBotRowPixel = currentBottomRowPixelQueue.get(j);
-					Pixel currentLeftTopRowPixel = null;
-					PixelColorRange currentLeftTopRowPixelRange = null;
-					if (j > 0) {
-						currentLeftTopRowPixel = nextResult.topRowOfPixels.get(j - 1);
-						currentLeftTopRowPixelRange = new PixelColorRange(currentLeftTopRowPixel.color);
-					}
-					Pixel currentRightTopRowPixel = null;
-					PixelColorRange currentRightTopRowPixelRange = null;
-					if (j < currentBottomRowPixelQueue.size() - 1) {
-						currentRightTopRowPixel = nextResult.topRowOfPixels.get(j + 1);
-						currentRightTopRowPixelRange = new PixelColorRange(currentRightTopRowPixel.color);
-					}
-					Pixel currentMiddleTopRowPixel = nextResult.topRowOfPixels.get(j);
-					
-					PixelColorRange currentBotRowPixelRange = new PixelColorRange(currentBotRowPixel.color);
-					 
-					PixelColorRange currentMiddleTopRowPixelRange = new PixelColorRange(currentMiddleTopRowPixel.color);
-					 
-					boolean leftMatches = false;
-					boolean middleMatches = false;
-					boolean rightMatches = false;
-					if (currentLeftTopRowPixelRange != null) {
-						if (currentLeftTopRowPixelRange.equals(currentBotRowPixelRange)) {
-							leftMatches = true;
-						}
-					}
-					
-					if (currentMiddleTopRowPixelRange.equals(currentBotRowPixelRange)) {
-						middleMatches = true;
-					}
-					
-					if (currentRightTopRowPixelRange != null) {
-						if (currentRightTopRowPixelRange.equals(currentBotRowPixelRange)) {
-							rightMatches = true;
-						}
-					}
-					Blob bottomRowBlob = null;
-					for (int k = 0; k < currentResult.blobList.size(); k++) {
-						if (currentResult.blobList.get(k).pixels.contains(currentBotRowPixel)) {
-							bottomRowBlob = currentResult.blobList.get(k);
-							break;
-						}
-					}
-					Blob topRowBlob1 = null;
-					for (int k = 0; k < nextResult.blobList.size(); k++) {
-						if (nextResult.blobList.get(k).pixels.contains(currentLeftTopRowPixel)) {
-							topRowBlob1 = nextResult.blobList.get(k);
-							break;
-						}
-						if (nextResult.blobList.get(k).pixels.contains(currentMiddleTopRowPixel)) {
-							topRowBlob1 = nextResult.blobList.get(k);
-							break;
-						}
-						if (nextResult.blobList.get(k).pixels.contains(currentRightTopRowPixel)) {
-							topRowBlob1 = nextResult.blobList.get(k);
-							break;
-						}
-					}
-					//account for case where the bot row pixel is the only connection between two blobs from
-					Blob topRowBlob2 = null;
-					if (leftMatches && !middleMatches && rightMatches && topRowBlob1 != null) {
-						if (!topRowBlob1.pixels.contains(currentRightTopRowPixel)) {
-							for (int k = 0; k < nextResult.blobList.size(); k++) {
-								if (nextResult.blobList.get(k).pixels.contains(currentRightTopRowPixel)) {
-									topRowBlob2 = nextResult.blobList.get(k);
-									break;
-								}
-							}
-						}
-					} else if (leftMatches && !middleMatches && rightMatches) {
-						for (int k = 0; k < nextResult.blobList.size(); k++) {
-							if (nextResult.blobList.get(k).pixels.contains(currentRightTopRowPixel)) {
-								topRowBlob1 = nextResult.blobList.get(k);
-								break;
-							}
-						}
-					}
-					
-					if (bottomRowBlob != null && topRowBlob1 != null) {
-						bottomRowBlob.pixels.addAll(topRowBlob1.pixels);
-					}
-					
-					if (bottomRowBlob != null && topRowBlob2 != null) {
-						bottomRowBlob.pixels.addAll(topRowBlob2.pixels);
-					}
-
-					if (bottomRowBlob != null) {
-						outputBlobs.add(bottomRowBlob);
-					}
-					
-				}
-			}
-			BlobCombinerThreadResult result = new BlobCombinerThreadResult(iValue, outputBlobs);
-			return result;
-		}
-	}
-	/**
 	 * Used when finding blobs from a row using parallel processing.
 	 * @author Jonah Schreiner
 	 *
@@ -245,7 +115,7 @@ public class BufferedImageToBlobsInParallel {
 				blobsToReturn.addAll(futureResult.blobList);
 			}
 		} catch (Exception e) {
-
+			e.printStackTrace();
 		} finally {
 			EXEC.shutdown();
 		}

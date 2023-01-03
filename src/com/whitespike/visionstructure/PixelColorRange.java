@@ -12,7 +12,7 @@ public class PixelColorRange {
 	public PixelColorRange(Color colorIn) {
 		float hsb[] = new float[3];
 		Color.RGBtoHSB(colorIn.getRed(), colorIn.getGreen(), colorIn.getBlue(), hsb);
-		if (hsb[1] < 0.05 && hsb[2] > 0.6) {
+		if (hsb[1] < 0.05 && hsb[2] > 0.86) {
 			this.color = "White";
 		} else if (hsb[1] < 0.05 && hsb[2] > 0.15) {
 			this.color = "Grey";
