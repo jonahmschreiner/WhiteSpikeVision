@@ -36,8 +36,10 @@ public class BaseSensesToHigherSenses {
 			List<Sense> currentHigherSensesLevel = new ArrayList<Sense>();
 			for (int i = 0; i < sensesToIterate.size(); i++) {
 				Sense currentSense = sensesToIterate.get(i);
+				currentSense.dbId = baseSensesIn.size() + i;
 				Sense currentHigherSense = SenseToHigherSense.extractHigherSense(currentSense, sensesToIterate);
 				if (currentHigherSense != null && !currentHigherSensesLevel.contains(currentHigherSense)) {
+					currentHigherSense.dbId = baseSensesIn.size() + i + 1;
 					currentHigherSensesLevel.add(currentHigherSense);
 				}
 			}

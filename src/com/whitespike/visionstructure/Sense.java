@@ -35,7 +35,7 @@ public class Sense implements Comparable<Sense>{
 	/**
 	 * The database id of this sense (not used in this non-db release).
 	 */
-	public int dbId;
+	public int dbId = -1;
 	/**
 	 * The blob that contains the pixel info about the sense.
 	 */

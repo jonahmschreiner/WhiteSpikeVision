@@ -60,7 +60,7 @@ public class RemoveOldSensesFromEnv {
 					Sense currOvSense2 = overlappingSenses.get(l);
 					if (currOvSense2.blob.pixels != currSense.blob.pixels) {
 						if (currOvSense2.blob.pixels.containsAll(currSenseBlobPixelsCopy)) {	
-							if (oldEnvIn.abstractEnv.recentlyChangedOldSenses.contains(oldEnvIn.abstractEnv.senses.indexOf(currSense))) {
+							if (oldEnvIn.abstractEnv.recentlyChangedOldSenses.contains(currSense.dbId)) { //changed from index to dbId
 								currOvSense2.blob.pixels.removeAll(currSenseBlobPixelsCopy);
 								currOvSense2.blob.edgePixels.removeAll(currSenseBlobPixelsCopy);
 							} else {

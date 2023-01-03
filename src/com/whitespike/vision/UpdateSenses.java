@@ -47,6 +47,12 @@ public class UpdateSenses {
 					ComparisonClass cc = currPMSense.comparisonClass;
 					int csbooScore = ComparisonScoreBasedOnOrientation.get(currPMSense.orientation, currSense.orientation);
 					if (csbooScore > 0) {
+						if (csbooScore > cc.highestScore) {
+							cc.secondHighestScore = cc.highestScore;
+							cc.highestScore = csbooScore;
+						} else if (csbooScore > cc.secondHighestScore) {
+							cc.secondHighestScore = csbooScore;
+						}
 						cc.comparisons.put(csbooScore, currSense);
 					}	
 				}
@@ -57,6 +63,12 @@ public class UpdateSenses {
 					ComparisonClass cc = currPMSense.comparisonClass;
 					int csbooScore = ComparisonScoreBasedOnOrientation.get(currPMSense.orientation, currSense.orientation);
 					if (csbooScore > 50) {
+						if (csbooScore > cc.highestScore) {
+							cc.secondHighestScore = cc.highestScore;
+							cc.highestScore = csbooScore;
+						} else if (csbooScore > cc.secondHighestScore) {
+							cc.secondHighestScore = csbooScore;
+						}
 						cc.comparisons.put(csbooScore, currSense);
 					}	
 				}
@@ -72,18 +84,18 @@ public class UpdateSenses {
 			Map<Sense, Sense> newSenseToOldSenseMatches = new HashMap<Sense, Sense>();
 			for (int k = 0; k < currSenseDefSenses.size(); k++) { //iterate over each sense for the type of senseDef
 				Sense currSense = currSenseDefSenses.get(k);
-				Set<Integer> keys = currSense.comparisonClass.comparisons.keySet();
-				Iterator<Integer> iter2 = keys.iterator();
-				for (int j = 0; j < keys.size(); j++) { //iterate over each sense's possible matches and assign the highest score
-					int currScore = iter2.next();
-					if (currScore > currSense.comparisonClass.highestScore) {
-						currSense.comparisonClass.secondHighestScore = currSense.comparisonClass.highestScore;
-						currSense.comparisonClass.highestScore = currScore;
-						
-					} else if (currScore > currSense.comparisonClass.secondHighestScore) {
-						currSense.comparisonClass.secondHighestScore = currScore;
-					}
-				}
+//				Set<Integer> keys = currSense.comparisonClass.comparisons.keySet();
+//				Iterator<Integer> iter2 = keys.iterator();
+//				for (int j = 0; j < keys.size(); j++) { //iterate over each sense's possible matches and assign the highest score
+//					int currScore = iter2.next();
+//					if (currScore > currSense.comparisonClass.highestScore) {
+//						currSense.comparisonClass.secondHighestScore = currSense.comparisonClass.highestScore;
+//						currSense.comparisonClass.highestScore = currScore;
+//						
+//					} else if (currScore > currSense.comparisonClass.secondHighestScore) {
+//						currSense.comparisonClass.secondHighestScore = currScore;
+//					}
+//				}
 				Sense oldMatchingSense = currSense.comparisonClass.comparisons.get(currSense.comparisonClass.highestScore);
 				if (oldMatchingSense != null) {
 					try {
@@ -138,7 +150,7 @@ public class UpdateSenses {
 					sensesIn.remove(newSense);
 					int index = envSenses.indexOf(oldSense);
 					envSenses.set(index, newSense);
-					oldEnvIn.abstractEnv.recentlyChangedOldSenses.add(newSense.dbId);//changed from index to newSense.dbId
+					oldEnvIn.abstractEnv.recentlyChangedOldSenses.add(oldSense.dbId);//changed from index to newSense.dbId
 					newSense.dbId = oldSense.dbId;
 				
 			}
