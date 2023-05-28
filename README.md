@@ -1,5 +1,5 @@
 What is this?
-This project is a partial implementation of a digital artificial general intelligence that I drew up between August 2022 and January 2023. The architecture was rationalized by thinking of an instant of human consciousness as a function (where the environment was the input and an action taken was the output), and life itself as a repetition of that function (which I called an LLF, looped-life-function).
+This project is a finished partial implementation of a digital artificial general intelligence that I drew up between August 2022 and January 2023. The architecture was rationalized by thinking of an instant of human consciousness as a function (where the environment was the input and an action taken was the output), and life itself as a repetition of that function (which I called an LLF, looped-life-function).
 
 Why a partial implementation? 
 I orginally implemented the entire model at once and as you've probably guessed, it had a never-ending series of bugs. To resolve this, I decided to redo it as independent packages to decouple them and make the debugging process easier.
